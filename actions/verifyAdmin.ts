@@ -1,6 +1,6 @@
 'use server'
 
-export async function verifyAdmin(pin: string) {
+export async function verifyAdmin(password: string) {
   const adminPassword = process.env.ADMIN_PASSWORD
-  return pin === adminPassword
+  return password === adminPassword
 }

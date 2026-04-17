@@ -9,7 +9,7 @@ interface AdminPINGuardProps {
 
 export default function AdminPINGuard({ children }: AdminPINGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
-  const [pin, setPin] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function AdminPINGuard({ children }: AdminPINGuardProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const isValid = await verifyAdmin(pin)
+    const isValid = await verifyAdmin(password)
     
     if (isValid) {
       sessionStorage.setItem('admin_auth', 'true')
@@ -27,7 +27,7 @@ export default function AdminPINGuard({ children }: AdminPINGuardProps) {
       window.location.reload()
     } else {
       setError(true)
-      setPin('')
+      setPassword('')
     }
   }
 
@@ -45,12 +45,12 @@ export default function AdminPINGuard({ children }: AdminPINGuardProps) {
           <div className="space-y-4">
             <input
               type="password"
-              value={pin}
+              value={password}
               onChange={(e) => {
-                setPin(e.target.value)
+                setPassword(e.target.value)
                 setError(false)
               }}
-              placeholder="ENTER PIN"
+              placeholder="ENTER PASSWORD"
               className={`w-full bg-white/5 border ${error ? 'border-red-500/50' : 'border-stone-800'} rounded-sm px-4 py-3 text-center text-stone-100 font-mono focus:outline-none focus:border-gold/50 transition-all`}
             />
             {error && <p className="text-[10px] font-mono text-red-500 uppercase tracking-widest">Invalid Credentials</p>}

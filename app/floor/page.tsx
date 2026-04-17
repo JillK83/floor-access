@@ -6,6 +6,7 @@ export const revalidate = 0
 
 async function getFloorItems() {
   const supabase = createServerSupabaseClient()
+  
   const { data, error } = await supabase
     .from('floor_items')
     .select('*')
@@ -15,21 +16,15 @@ async function getFloorItems() {
     console.error('Error fetching floor items:', error)
     return []
   }
-  if (data && data.length > 0) {
-    console.log('SERVER DEBUG: First Item ID:', data[0].id)
-    console.log('SERVER DEBUG: First Item Name:', data[0].name)
-    console.log('SERVER DEBUG: First Item Price:', data[0].price)
-    console.log('SERVER DEBUG: First Item Image URL:', data[0].image_url)
-  }
+  
   return data || []
 }
 
-export default async function Home() {
+export default async function FloorPage() {
   const items = await getFloorItems()
 
   return (
     <main className="min-h-screen bg-matte-black text-white relative overflow-hidden font-sans">
-      {/* Background radial gradient for subtle depth */}
       <div className="absolute inset-0 z-0 bg-radial-at-t from-charcoal to-matte-black opacity-40 pointer-events-none" />
       
       <div className="relative z-10 w-full">

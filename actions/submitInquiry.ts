@@ -12,56 +12,61 @@ export async function submitInquiry(formData: FormData) {
   const phone = formData.get('phone') as string
   const category = formData.get('category') as string
   const customerMessage = formData.get('customerMessage') as string
+  const itemId = formData.get('itemId') as string
+  const itemOfInterest = formData.get('itemOfInterest') as string
 
-  console.log('DEBUG: Received Inquiry Data', { name, phone, category, customerMessage })
+  console.log('DEBUG: Received Inquiry Data', { name, phone, category, customerMessage, itemId, itemOfInterest })
 
   if (!phone) {
     throw new Error('Phone number is required')
   }
 
   // AI Categorization and Sentiment Analysis
-  const systemPrompt = `You are a triage assistant for a NYC furniture showroom. Analyze the customer inquiry and return ONLY valid JSON with no markdown fences:
+  const systemPrompt = `You are an expert triage assistant for 'Asian Barn,' a premium NYC furniture showroom. 
+  Analyze the customer inquiry and return ONLY valid JSON with no markdown fences.
+  
+  PRIORITY TIERS:
+  - 'High Intent': Direct sales inquiries, pricing requests, or checkout intent. (Action: Sales/Consult)
+  - 'Medium Intent': Inventory status, stock checks, or logistical questions. (Action: Logistics/Stock)
+  - 'Low Intent': Store hours, location, or general FAQ. (Action: Hours/FAQ)
+
+  JSON SCHEMA:
   {
-    "intent_tag": "High Intent / Sales" | "Low Urgency / Support" | "Medium / General Inquiry" | "Urgent",
-    "sentiment": "positive" | "neutral" | "negative",
-    "sms_reply": "pre-written SMS reply under 160 chars, warm and direct, signed — Asian Barn"
+    "intent_tag": "High Intent" | "Medium Intent" | "Low Intent",
+    "sentiment": "positive" | "neutral" | "frustrated",
+    "sms_reply": "A warm, personal draft under 160 chars. Address the specific intent. Signed — Asian Barn Concierge"
   }`
 
-  console.log('Calling OpenAI...')
+  console.log('Calling Triage Brain (OpenAI)...')
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: `Category: ${category}\nMessage: ${customerMessage}` },
+      { role: 'user', content: `Item: ${itemOfInterest || 'General'}\nCategory: ${category}\nMessage: ${customerMessage}` },
     ],
     response_format: { type: 'json_object' },
   })
 
-  console.log('Raw OpenAI response:', response.choices[0].message.content)
-  const cleaned = response.choices[0].message.content!.replace(/```json|```/g, '').trim()
-  console.log('Cleaned response:', cleaned)
-  const parsed = JSON.parse(cleaned)
-  console.log('Parsed:', parsed)
-
+  const rawJson = response.choices[0].message.content!
+  const parsed = JSON.parse(rawJson)
   const { intent_tag, sentiment, sms_reply } = parsed
 
   const supabase = createServerSupabaseClient()
   
-  // Mapping to user's actual Supabase column names
   const { data, error } = await supabase
     .from('inquiries')
     .insert([{
-      customer_name: name || null,
+      customer_name: name,
       customer_phone: phone,
-      item_of_interest: category,
       category: category,
-      customer_message: customerMessage || '',
-      message: customerMessage || '',
+      customer_message: customerMessage,
+      item_of_interest: itemOfInterest,
       sentiment: sentiment,
       intent_tag: intent_tag,
-      sms_reply: sms_reply,
+      ai_reply_draft: sms_reply,
       status: 'new',
-      is_urgent: intent_tag === 'Urgent'
+      item_id: itemId || null,
+      created_at: new Date().toISOString()
     }])
 
   if (error) {

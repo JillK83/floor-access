@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clear-db": "node scripts/clear-db.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.3",
+    "framer-motion": "^12.38.0",
     "geist": "^1.7.0",
     "lucide-react": "^1.8.0",
     "next": "14.2.35",

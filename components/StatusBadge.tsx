@@ -5,20 +5,18 @@ interface StatusBadgeProps {
 }
 
 export default function StatusBadge({ intent }: StatusBadgeProps) {
-  let colors = 'bg-stone-700 text-stone-200'
+  let colors = 'bg-stone-800 text-stone-400 border-white/5'
 
-  if (intent === 'High Intent / Sales') {
-    colors = 'bg-red-900 text-red-200'
-  } else if (intent === 'Urgent') {
-    colors = 'bg-amber-900 text-amber-200'
-  } else if (intent === 'Appointment Request') {
-    colors = 'bg-blue-900 text-blue-200'
-  } else if (intent === 'Medium / General Inquiry' || intent === 'General Inquiry') {
-    colors = 'bg-stone-700 text-stone-200'
+  if (intent === 'High Intent' || intent === 'Urgent') {
+    colors = 'bg-red-950/50 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]'
+  } else if (intent === 'Medium Intent') {
+    colors = 'bg-gold/10 text-gold border-gold/20'
+  } else if (intent === 'Low Intent') {
+    colors = 'bg-stone-800 text-stone-500 border-white/5'
   }
 
   return (
-    <span className={`rounded-sm font-mono text-[10px] px-2 py-0.5 uppercase tracking-wider ${colors}`}>
+    <span className={`rounded-sm font-mono text-[9px] px-2 py-0.5 uppercase tracking-[0.15em] font-medium border ${colors}`}>
       {intent}
     </span>
   )

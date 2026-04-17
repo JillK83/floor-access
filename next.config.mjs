@@ -1,18 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'www.asianbarnnyc.com',
+        hostname: 'static1.squarespace.com',
       },
       {
         protocol: 'https',
-        hostname: 'static1.squarespace.com',
-      },
-      {
-        protocol: 'http',
-        hostname: 'static1.squarespace.com',
+        hostname: 'www.asianbarnnyc.com',
       },
     ],
   },

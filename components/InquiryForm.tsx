@@ -7,16 +7,29 @@ import { submitInquiry } from '@/actions/submitInquiry'
 
 const CATEGORIES = ['Availability', 'Delivery', 'Lost & Found', 'Pricing', 'Other']
 
-export default function InquiryForm() {
+interface ItemContext {
+  id: string
+  name: string
+  price: number
+}
+
+interface InquiryFormProps {
+  itemContext?: ItemContext
+  onSuccess?: () => void
+}
+
+export default function InquiryForm({ itemContext, onSuccess }: InquiryFormProps) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [category, setCategory] = useState(CATEGORIES[0])
+  const [category, setCategory] = useState(itemContext ? 'Availability' : CATEGORIES[0])
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
   const messageRef = useRef<HTMLTextAreaElement>(null)
+
+  const itemOfInterest = itemContext?.name || 'General Concierge'
 
   useEffect(() => {
     if (category === 'Other' && messageRef.current) {
@@ -47,9 +60,15 @@ export default function InquiryForm() {
       formData.append('phone', phone)
       formData.append('category', category)
       formData.append('customerMessage', message)
+      formData.append('itemOfInterest', itemOfInterest)
+
+      if (itemContext) {
+        formData.append('itemId', itemContext.id)
+      }
 
       await submitInquiry(formData)
       setIsSuccess(true)
+      onSuccess?.()
     } catch (err) {
       setError('Something went wrong. Please try again.')
       console.error(err)
@@ -60,41 +79,42 @@ export default function InquiryForm() {
 
   if (isSuccess) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-matte-black overflow-hidden animate-in fade-in duration-500">
-        {/* Background Image with Fallback */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="http://static1.squarespace.com/static/59c26c90bce176b201481ae4/63b5b6ee64b96a44587f8628/69a2349fdb7fc05e5f33beec/1776204161504/d52a40976e70801565d5d4df3d1eef82d5bddf22dd1ab1975d73ebccf777e3e7.png"
-            alt="Asian Barn furniture"
-            fill
-            priority
-            className="object-cover opacity-40"
-            onError={(e) => {
-               e.currentTarget.style.display = 'none'
-            }}
-          />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-
-        <div className="relative z-10 text-center space-y-6 max-w-sm px-6">
+      <div className="flex flex-col items-center justify-center min-h-[400px] animate-in fade-in zoom-in duration-500">
+        <div className="w-full max-w-[400px] bg-[#0a0a0a] border border-gold/30 p-12 rounded-lg shadow-[0_30px_60px_rgba(0,0,0,0.8)] text-center space-y-8 relative overflow-hidden">
+          {/* Decorative Atelier Accent */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+          
           <div className="flex justify-center">
-            <div className="rounded-full bg-gold-bg p-4 border border-gold/30">
-              <CheckCircle className="w-20 h-20 text-gold stroke-[1.5]" />
+            <div className="rounded-full bg-gold/5 p-6 border border-gold/10">
+              <CheckCircle className="w-12 h-12 text-gold stroke-[1.2]" />
             </div>
           </div>
           
-          <div className="space-y-2">
-            <h2 className="text-4xl font-bold text-white tracking-tight">Got it!</h2>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              The team is on the floor right now, but we&apos;ll text you back shortly.
-            </p>
+          <div className="space-y-4">
+            <h2 className="text-3xl font-serif text-white tracking-tight leading-tight">Request Received</h2>
+            <div className="space-y-3">
+              <p className="text-stone-400 font-mono text-[10px] uppercase tracking-widest leading-relaxed">
+                Your inquiry for <br/>
+                <span className="text-gold block mt-2 text-xs font-bold tracking-[0.2em]">{itemContext?.name || 'General Concierge'}</span>
+              </p>
+              <div className="h-[1px] w-8 bg-gold/20 mx-auto" />
+              <p className="text-stone-600 font-mono text-[9px] uppercase tracking-[0.25em] pt-2">
+                Our floor manager will text you <br/> back shortly.
+              </p>
+            </div>
           </div>
-
-          <button 
-            onClick={() => setIsSuccess(false)}
-            className="text-gray-500 hover:text-gold transition-colors text-sm font-medium pt-4"
+          
+          <button
+            onClick={() => {
+              setIsSuccess(false)
+              setName('')
+              setPhone('')
+              setMessage('')
+              setCategory(itemContext ? 'Availability' : CATEGORIES[0])
+            }}
+            className="w-full font-mono text-[10px] text-gold/60 uppercase tracking-[0.3em] py-4 border border-gold/10 rounded-sm hover:bg-gold/5 hover:text-white transition-all"
           >
-            Back to Home
+            Close Confirmation
           </button>
         </div>
       </div>
@@ -102,17 +122,12 @@ export default function InquiryForm() {
   }
 
   return (
-    <div className="relative w-full max-w-md mx-auto p-6 space-y-12">
-      {/* Watermark */}
-      <div className="absolute top-0 left-0 -translate-x-4 -translate-y-8 text-[120px] font-bold text-gold/10 leading-none select-none pointer-events-none z-0">
-        01
-      </div>
-
-      <header className="relative z-10 space-y-1">
-        <h1 className="text-3xl font-bold text-white tracking-tight">
-          Get Floor Access — Text Us
+    <div className="relative w-full max-w-md mx-auto space-y-12">
+      <header className="relative z-10 space-y-2">
+        <p className="text-stone-500 font-mono text-[10px] uppercase tracking-[0.3em]">Direct Concierge</p>
+        <h1 className="text-3xl font-serif text-white tracking-tight">
+          {itemContext ? `Inquire: ${itemContext.name}` : 'Get Floor Access — Text Us'}
         </h1>
-        <p className="text-gray-400 text-sm">Our team will respond within minutes</p>
       </header>
 
       <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
@@ -142,29 +157,31 @@ export default function InquiryForm() {
             />
           </div>
 
-          {/* Category Chips */}
-          <div className="space-y-4">
-            <label className="text-xs font-mono uppercase tracking-widest text-gray-400">What can we help with?</label>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => {
-                    setCategory(cat)
-                    setError(null)
-                  }}
-                  className={`px-4 py-2 rounded-full text-xs font-medium border transition-all ${
-                    category === cat
-                      ? 'bg-gold text-matte-black border-gold'
-                      : 'bg-transparent text-gray-300 border-white/20 hover:border-white/40'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+          {/* Category Chips - Only show in Global Flow (A) */}
+          {!itemContext && (
+            <div className="space-y-4">
+              <label className="text-xs font-mono uppercase tracking-widest text-gray-400">What can we help with?</label>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => {
+                      setCategory(cat)
+                      setError(null)
+                    }}
+                    className={`px-4 py-2 rounded-full text-xs font-medium border transition-all ${
+                      category === cat
+                        ? 'bg-gold text-matte-black border-gold'
+                        : 'bg-transparent text-gray-300 border-white/20 hover:border-white/40'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Message */}
           <div className="space-y-2">

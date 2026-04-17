@@ -1,0 +1,33 @@
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+    console.error("Missing Supabase keys in .env file.");
+    process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function clearInquiries() {
+    console.log("Starting Atelier Database Surgery...");
+
+    // This deletes all rows from the inquiries table
+    const { error } = await supabase
+        .from('inquiries')
+        .delete()
+        .neq('id', 0); // Hack to delete all rows
+
+    if (error) {
+        console.error("Error wiping table:", error);
+    } else {
+        console.log("Success: Showroom floor is now spotless. All test inquiries removed.");
+    }
+}
+
+clearInquiries();
