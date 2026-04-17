@@ -1,33 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'static1.squarespace.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.asianbarnnyc.com',
-      },
-    ],
-  },
-};
-
-export default nextConfig;
-/** @type {import('next').NextConfig} */
-const nextConfig = {
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
+    // This allows the build to finish even with the 'any' type errors
     ignoreBuildErrors: true,
   },
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
+    // This allows the build to finish even with the 'unused variable' errors
     ignoreDuringBuilds: true,
   },
 };
