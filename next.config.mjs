@@ -8,6 +8,19 @@ const nextConfig = {
     // This allows the build to finish even with the 'unused variable' errors
     ignoreDuringBuilds: true,
   },
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'static1.squarespace.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.asianbarnnyc.com',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

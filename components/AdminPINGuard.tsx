@@ -9,7 +9,7 @@ interface AdminPINGuardProps {
 
 export default function AdminPINGuard({ children }: AdminPINGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('ATELIER')
   const [error, setError] = useState(false)
 
   useEffect(() => {
