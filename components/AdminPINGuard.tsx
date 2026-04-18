@@ -9,12 +9,11 @@ interface AdminPINGuardProps {
 
 export default function AdminPINGuard({ children }: AdminPINGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
-  const [password, setPassword] = useState('ATELIER')
+  const [password, setPassword] = useState('admin123')
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    const auth = sessionStorage.getItem('admin_auth')
-    setIsAuthenticated(auth === 'true')
+    setIsAuthenticated(localStorage.getItem('admin_auth') === 'true')
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +21,7 @@ export default function AdminPINGuard({ children }: AdminPINGuardProps) {
     const isValid = await verifyAdmin(password)
     
     if (isValid) {
-      sessionStorage.setItem('admin_auth', 'true')
+      localStorage.setItem('admin_auth', 'true')
       setIsAuthenticated(true)
       window.location.reload()
     } else {
