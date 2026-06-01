@@ -2,6 +2,16 @@
 
 A high-performance digital utility layer ("sidecar") built for **Asian Barn NYC**. This application bridges the high-friction gap between discovering unique, one-of-a-kind luxury antiques and securing them immediately. It bypasses legacy static page updates to provide real-time inventory drop synchronization and an AI-assisted text-concierge triage workspace.
 
+# Shop OS: Floor Access
+
+An enterprise-level realtime showroom "Sidecar" platform for boutique furniture retail.
+
+🔗 **[Live Showroom Demo (Customer View)](https://floor-access.vercel.app)**  
+🔗 **[Live Triage Hub (Owner Dashboard)](https://floor-access.vercel.app/admin)** no password needed, click enter
+
+---
+
+
 ---
 
 ## 🏛️ Project Architecture: The Dual-Flow Sidecar
